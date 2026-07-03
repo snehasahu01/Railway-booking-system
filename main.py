@@ -23,7 +23,7 @@ def save_json(filename,data):
         json.dump(data,f,indent=4)
 
 if "bookings" not in st.session_state:
-    st.session_state.booking = load_json(BOOKINGS_FILE)
+    st.session_state.bookings = load_json(BOOKINGS_FILE)
 if "users" not in st.session_state:
     st.session_state.users = load_json(USER_FILE)
 if "logged_in" not in st.session_state:
@@ -161,7 +161,7 @@ def validata_email(email):
     return re.match(pattern, email) is not None
 
 def send_otp_email(to_email):
-    otp = str(random.randint(1000000,1000000))
+    otp = str(random.randint(100000,999999))
     st.session_state.otp_store[to_email] = otp
     msg = EmailMessage()
     msg['Subject'] = "your otp for Railway booking"
@@ -170,7 +170,7 @@ def send_otp_email(to_email):
     msg.set_content(f"your otp is:{otp}")
     try:
         with smtplib.SMTP_SSL('smtp.gmail.com',465) as smtp:
-            smtp.login("gmansstar2314@gmail.com","PYTHON@23462")
+            smtp.login("Ayushbro779@gmail.com","okaupcpqfgudzygc")
             smtp.send_message(msg)
         return True
     except Exception as e:
@@ -202,7 +202,7 @@ def display_ticket(ticket):
     with col1:
         st.metric("PNR Number",ticket["PNR"])
     with col2:
-        st.metric("Booking time", ticket["Booking time"])
+        st.metric("Booking Time", ticket["Booking iTme"])
     with col3:
         st.metric("Status", ticket["Status"])
     st.markdown("---")
@@ -210,37 +210,37 @@ def display_ticket(ticket):
     st.write("Passenger Details")
     col1 , col2 = st.columns(2)
     with col1:
-        st.write(f"Name : {ticket["Name"]}")
-        st.write(f"Age:{ticket["Age"]}")
-        st.write(f"Mobile:{ticket["Mobile"]}")
+        st.write(f"Name : {ticket['Name']}")
+        st.write(f"Age:{ticket['Age']}")
+        st.write(f"Mobile:{ticket['Mobile']}")
     with col2:
-        st.write(f"Nationality:{ticket["Nationality"]}")
-        st.write(f"Address:{ticket["Address"]}")
+        st.write(f"Nationality:{ticket['Nationality']}")
+        st.write(f"Address:{ticket['Address']}")
     st.markdown("---")
 
     st.write("Train Details")
     col1, col2 = st.columns(2)
     with col1:
-        st.write(f"Train Name: {ticket["Train"]}")
-        st.write(f"Train Number: {ticket["Train No"]}")
+        st.write(f"Train Name: {ticket['Train']}")
+        st.write(f"Train Number: {ticket['Train No']}")
     with col2:
-        st.write(f"Class: {ticket["Class"]}")
+        st.write(f"Class: {ticket['Class']}")
         
     st.markdown("---")
 
     st.write("Journey Details")
     col1, col2 = st.columns(2)
     with col1:
-        st.write(f"Form: {ticket["From"]}")
-        st.write(f"To: {ticket["To"]}")
-        st.write(f"Journey Date: {ticket["Journey Date"]}")
+        st.write(f"Form: {ticket['From']}")
+        st.write(f"To: {ticket['To']}")
+        st.write(f"Journey Date: {ticket['Journey Date']}")
     with col2:
-        st.write(f"Departure: {ticket["Departure"]}")
-        st.write(f"Arrival: {ticket["Arrival"]}")
+        st.write(f"Departure: {ticket['Departure']}")
+        st.write(f"Arrival: {ticket['Arrival']}")
     st.markdown("---")
 
     st.write("Payment Details")
-    st.write(f"Total Fare: Rs.{ticket["Fare"]}")
+    st.write(f"Total Fare: Rs.{ticket['Fare']}")
     st.markdown("---")
 
 def register_page():
@@ -303,7 +303,7 @@ def booking_page():
         with col1:
             name = st.text_input("Full Name")
             age = st.number_input("Age", min_value = 1, max_value = 120, value = 25)
-            mobile = st.text_inpt("Mobile Number")
+            mobile = st.text_input("Mobile Number")
         with col2:
             nationality = st.text_input("Nationality", value = "Indian")
             address = st.text_area("Address")
@@ -314,29 +314,29 @@ def booking_page():
         with col4:
             to_station = st.text_input("To Station")
 
-        max_date = datetime.data.today() + datetime.timedelta(dats=60)
+        max_date = datetime.date.today() + datetime.timedelta(days=60)
         journey_date = st.date_input(
             "Journey Date",
             min_value = datetime.date.today(),
             max_value = max_date,
             help = "Booking allowed only up to 60 days in advance"
         )
-        st.subheader("Train selection")
-        train_options = []
+        st.subheader("Trains selection")
+        trains_options = []
         for i, t in enumerate(st.session_state.trains):
-            seats_info = f"SL:{t["seats"]["SL"]} | 3A:{t["seats"]["3A"]} |  2A:{t["seats"]["2A"]}"
-            train_options.append(
-                f"{t["name"]} ({t["train_no"]}) - {t["from"]} to {t["to"]} | "
-                f"Dep: {t["departure"]} Arr: {t["arrival"]} | Seats: {seats_info}"
+            seats_info = f"SL:{t['seats']['SL']} | 3A:{t['seats']['3A']} |  2A:{t['seats']['2A']}"
+            trains_options.append(
+                f"{t['name']} ({t['train_no']}) - {t['from']} to {t['to']} | "
+                f"Dep: {t['departure']} Arr: {t['arrival']} | Seats: {seats_info}"
             )
         selected_train_idx = st.selectbox(
             "Select Train",
-            range(len(st.session_state.train)),
-            format_func=lambda x: train_options[x]      
+            range(len(st.session_state.trains)),
+            format_func=lambda x: trains_options[x]      
         )
         selected_train = st.session_state.trains[selected_train_idx]
         available_classes = []
-        for cls in ["Sl","3A","2A"]:
+        for cls in ["SL","3A","2A"]:
             if selected_train["seats"][cls] > 0:
                 available_classes.append(f"{cls} (Rs.{fare_chart[cls]}) - {selected_train["seats"][cls]}seats")
             else:
@@ -365,7 +365,7 @@ def booking_page():
                     "To": to_station,
                     "Mobile": mobile,
                     "Age": age,
-                    "nationlity": nationality,
+                    "Nationality": nationality,
                     "Address": address,
                     "Journey Date": journey_date.strftime("%d-%m-%Y"),
                     "Train": train["name"],
@@ -375,15 +375,15 @@ def booking_page():
                     "Departure": train["departure"],
                     "Arrival": train["arrival"],
                     "Booking Time": datetime.datetime.now().strftime("%d-%m-%Y %H:%M"),
-                    "status": "CONFIRMED"
+                    "Status": "CONFIRMED"
                 }
-                st.session_state.booking[pnr] = ticket
+                st.session_state.bookings[pnr] = ticket
                 save_json(BOOKINGS_FILE,st.session_state.bookings)
-                st.session_state.user[st.session_state.current_user]["booking"].append(pnr)
-                save_json(USER_FILE.st.session_state.user)
+                st.session_state.users[st.session_state.current_users]["bookings"].append(pnr)
+                save_json(USER_FILE,st.session_state.users)
                 st.success("Ticket Booked Successfully!")
                 qr_data = (
-                    f"PNR: {pnr}\nName: {name}\Train: {train["name"]} ({train["train_no"]})\n"
+                    f"PNR: {pnr}\nName: {name}\Train: {train['name']} ({train['train_no']})\n"
                     f"From: {from_station} to {to_station}\nclass: {cls}\nFare: Rs.{fare}\n"
                     f"Journey Date: {journey_date.strftime("%d-%m-%y")}\nStatus: CONFIRMED"
                 )
@@ -396,7 +396,7 @@ def booking_page():
                     st.image(qr_img, caption = "Scan to view tricket" , use_container_width=True )
 def view_booking_page():
     st.title("My Bookings")
-    user_booking = st.session_state.users[st.session_state.current_user].get("booking",[])
+    user_booking = st.session_state.users[st.session_state.current_users].get("bookings",[])
     if not user_booking:
         st.info("No booking found. Book your first ticket!")
         return
@@ -406,26 +406,26 @@ def view_booking_page():
         ticket = st.session_state.bookings.get(pnr)
         if ticket:
             with st.expander(
-                f"Booking #{idx} - PNR: {pnr} | {ticket["Train"]} | "
-                f"{ticket["From"]} to {ticket["To"]} | Status: {ticket["Status"]}",
+                f"Booking #{idx} - PNR: {pnr} | {ticket['Train']} | "
+                f"{ticket['From']} to {ticket['To']} | Status: {ticket['Status']}",
                 expanded=(idx==1)
             ):
                 col1 , col2 = st.columns([3,1])
                 with col1:
-                    st.write(f"Train: {ticket["Traiin"]} ({ticket["Train No"]})")
-                    st.write(f"Routa: {ticket["from"]} to {ticket["To"]}")
-                    st.write(f"Class: {ticket["Class"]} | Fare: Rs.{ticket["Fare"]}")
-                    st.write(f"Booking Date: {ticket["Booking Time"]} | Journey Date: {ticket["Journey Date"]}")
-                    st.write(f"Status: {ticket["Status"]}")
+                    st.write(f"Train: {ticket['Train']} ({ticket['Train No']})")
+                    st.write(f"Routa: {ticket['From']} to {ticket['To']}")
+                    st.write(f"Class: {ticket['Class']} | Fare: Rs.{ticket['Fare']}")
+                    st.write(f"Booking Date: {ticket['Booking Time']} | Journey Date: {ticket['Journey Date']}")
+                    st.write(f"Status: {ticket['Status']}")
                     st.markdown("---")
                     if st.checkbox("Show Full Ticket Datails",key = f"full_{pnr}"):
                         display_ticket(ticket)
                 with col2:
                     st.write('QR code')
                     qr_data = (
-                        f"PNR: {pnr}\nName: {ticket["Name"]}\nTrain: {ticket["Train"]} ({ticket["Train No "]})\n"
-                        f"From: {ticket["From"]} to {ticket["To"]}\nclass: {ticket["Class"]}\n"
-                        f"Fares: Rs.{ticket['Fare']}\nJourney Date: {ticket['Journey Date']}\nStatus: {ticket["Status"]}"
+                        f"PNR: {pnr}\nName: {ticket['Name']}\nTrain: {ticket['Train']} ({ticket['Train No ']})\n"
+                        f"From: {ticket['From']} to {ticket["To"]}\nClass: {ticket['Class']}\n"
+                        f"Fares: Rs.{ticket['Fare']}\nJourney Date: {ticket['Journey Date']}\nStatus: {ticket['Status']}"
                     )
                     qr_img = generate_qr_code(qr_data)
                     st.image(qr_img, use_container_width=True)
@@ -434,7 +434,7 @@ def view_booking_page():
                         if st.button(f"Cancel", key=f"cancel_{pnr}",use_container_width=True):
                             ticket["Status"] = "CANCELLED"
                             refund = ticket["Fare"] * 0.8
-                            st.session_state.booking[pnr] = ticket
+                            st.session_state.bookings[pnr] = ticket
                             save_json(BOOKINGS_FILE,st.session_state.bookings)
                             st.success(f"Ticket cancelled. Refund: Rs.{refund}")
                             st.rerun()
@@ -443,7 +443,7 @@ def edit_booking():
     pnr_input = st.text_input("Enter your pnr number to edit your booking")
     if pnr_input:
         if pnr_input in st.session_state.bookings:
-            ticket = st.session_state.booking[pnr_input]
+            ticket = st.session_state.bookings[pnr_input]
             st.success("booking found! you can now edit your details below.")
             with st.form("edit_booking_from"):
                 name = st.text_input("Passenger Name",value=ticket["Name"])
@@ -456,9 +456,9 @@ def edit_booking():
                     options=["SL","3A","2A"],
                     index = ["SL","3A","2A"].index(current_class)
                 )
-                journey_data = st.data_input(
+                journey_data = st.date_input(
                     "journey Data",
-                    value = datetime.datetime.strptime(ticket["Journey Data"], "%d=%m-%Y").date()
+                    value = datetime.datetime.strptime(ticket["Journey Date"], "%d-%m-%Y").date()
                 )
                 submit_changes = st.form_submit_button("UPdate Booking")
                 if submit_changes:
@@ -467,7 +467,7 @@ def edit_booking():
                         return
                     train_no = ticket["Train No"]
                     train = next((t for t in st.session_state.trains if t["train_no"] == train_no),None)
-                    if train_class != ticket["class"] and train["seats"][train_class] <=0:
+                    if train_class != ticket["Class"] and train["seats"][train_class] <=0:
                         st.error(f" No seats available in {train_class} class.")
                         return
                     if train_class != ticket["Class"]:
@@ -481,10 +481,10 @@ def edit_booking():
                     ticket["Journey Date"] = journey_data.strftime("%d-%m-%y")
                     ticket["Fare"] = fare_chart[train_class]
                     ticket["Booking Time"] = datetime.datetime.now().strftime("%d-%m-%y %H:%M")
-                    st.session_state.booking[pnr_input] = ticket
+                    st.session_state.bookings[pnr_input] = ticket
                     save_json(BOOKINGS_FILE, st.session_state.bookings)
                     st.success("Booking updated successfully!")
-                    qr_date = f"pnr: {ticket["PNR"]}\nName: {ticket["Name"]}\nTrain: {ticket["Train"]} ({ticket["Train No"]})\nFrom: {ticket["From"]} -> {ticket["TO"]}\nClass: {ticket["Class"]}\nJourney Date: {ticket["Journey date"]}\nStatus :{ticket["Status"]}"
+                    qr_date = f"pnr: {ticket["PNR"]}\nName: {ticket["Name"]}\nTrain: {ticket["Train"]} ({ticket["Train No"]})\nFrom: {ticket["From"]} -> {ticket["To"]}\nClass: {ticket["Class"]}\nJourney Date: {ticket["Journey Date"]}\nStatus :{ticket["Status"]}"
                     qr_img = generate_qr_code(qr_date)
                     st.image(qr_img,caption="update E-ticket QR code",use_column_width=False)
                     display_ticket(ticket)
@@ -508,7 +508,7 @@ def track_pnr_page():
             with col2:
                 st.write("QR Code")
                 qr_data = (
-                    f"pnr: {pnr}\nName: {ticket["nmae"]}\nTrain: {ticket["Train"]} ({ticket["Train No"]})\n"
+                    f"pnr: {pnr}\nName: {ticket["Name"]}\nTrain: {ticket["Train"]} ({ticket["Train No"]})\n"
                     f"From:{ticket["From"]} to {ticket["To"]}\nClass: {ticket["Class"]}\n "
                     f"Fare: Rs.{ticket["Fare"]}\nJourney Date: {ticket["Journey Date"]}\nStatus: {ticket["Status"]}"                               
                 )
@@ -518,7 +518,7 @@ def track_pnr_page():
             st.error("PNR not found! please check the PNR number.")
 def clear_booking_page():
     st.title("Clear All Boolking")
-    user_bookings = st.session_state.users[st.session_state.current_user].get("booking",[])
+    user_bookings = st.session_state.users[st.session_state.current_users].get("bookings",[])
     if not user_bookings:
         st.info("No bookings to clear.")
         return
@@ -527,15 +527,15 @@ def clear_booking_page():
     col1, col2, col3 = st.columns([1,1,2])
     with col1:
         if st.button("Clear All",use_container_width=True):
-            st.session_stat.confirm_clear = True
+            st.session_state.confirm_clear = True
     if st.session_state.get("confirm_clear",False):
         st.error("Are you sure! This cannot be undone!")
         col1 , col2 = st.columns(2)
         with col1:
             if st.button("Yes, Delete all",use_container_width=True):
-                for pnr in st.session_state.users[st.session_state.current_user].get("bookings",[]):
+                for pnr in st.session_state.users[st.session_state.current_users].get("bookings",[]):
                     st.session_state.bookings.pop(pnr,None)
-                    st.session_state.users[st.session_state.current_user]["booking"].clear()
+                    st.session_state.user[st.session_state.current_users]["bookings"].clear()
                     save_json(BOOKINGS_FILE,st.session_state.bookings)
                     save_json(USER_FILE,st.session_state.users)
                     st.session_state.confirm_clear = False
@@ -566,7 +566,7 @@ def main():
             st.divider()
             menu = st.radio(
                 "Navigation",
-                ["Book tictet","My Booking","Edit Booking","Track PNR","clear Booking"],
+                ["Book Ticket","My Booking","Edit Booking","Track PNR","Clear Booking"],
                 label_visibility="collapsed"
             )
             st.divider()
@@ -581,8 +581,8 @@ def main():
         elif menu == "Edit Booking":
             edit_booking()
         elif menu == "Track PNR":
-            track_pnr_page
-        elif menu == "clear Booking":
+            track_pnr_page()
+        elif menu == "Clear Booking":
             clear_booking_page()
 if __name__=="__main__":
     main()

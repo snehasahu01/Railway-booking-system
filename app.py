@@ -144,11 +144,11 @@ TRAINS = [
 FARE_SHART = {"SL":600,"3A":1000,"2A":1500}
 app = Flask(__name__)
 app.secret_key = "replace-rhis-with-a-secure-random-value"
-EMAIL_USER = os.environ.get("RAILWAY_APP_EMAIL","gmansstar2314@gmail.com")
-EMAIL_PASS = os.environ.get("RAILWAY_APP_EMAIL","PYTHON@23462")
+EMAIL_USER = os.environ.get("RAILWAY_APP_EMAIL","Ayushbro779@gmail.com")
+EMAIL_PASS = os.environ.get("RAILWAY_APP_EMAIL","okaupcpqfgudzygc")
 OTP_EXPIRAY_MINUTES = 5
-PENDING_REGISTRATION : dict[str,str] = {}
-OTP_STORE = {}
+OTP_STORE : dict[str,dict[str,datetime.datetime|str]] = {}
+PENDING_REGISTRATION  = {}
 
 def load_json (filename):
     if os.path.exists(filename):
