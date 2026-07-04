@@ -26,7 +26,7 @@ TRAINS = [
         {
             "train_no":"T101",
             "name":"Express A",
-            "from":"Delfi",
+            "from":"Delhi",
             "to":"Mumbai",
             "departure":"09:00",
             "arrival":"18:00",
@@ -44,7 +44,7 @@ TRAINS = [
         {
             "train_no":"T103",
             "name":"Duronto c",
-            "from":"Dlile",
+            "from":"Delhi",
             "to":"chennai",
             "departure":"7:00",
             "arrival":"22:00",
@@ -52,7 +52,7 @@ TRAINS = [
         },
         {
             "train_no":"up101",
-            "name":"Varanasi Sharabdi",
+            "name":"Varanasi Shatabdi",
             "from":"varanasi",
             "to":"Delhi",
             "departure":"6:00",
@@ -61,7 +61,7 @@ TRAINS = [
         },
         {
             "train_no":"up102",
-            "name":"kanpur Intersity",
+            "name":"kanpur Intercity",
             "from":"kanpur",
             "to":"dehli",
             "departure":"5:00",
@@ -438,9 +438,9 @@ def book_ticket():
         to_station = request.form.get("to_station","").strip()
         journey_date = request.form.get("journey_date","")
         train_no = request.form.get("train_no","")
-        travel_class = request.form.get("class","")
+        travel_Class = request.form.get("Class","")
         train = get_train(train_no) if train_no else None
-        if not all([name,age,mobile,from_station,to_station,journey_date,train_no,travel_class]):
+        if not all([name,age,mobile,from_station,to_station,journey_date,train_no,travel_Class]):
             flash("Please fill out all required fields.", "danger")
         elif not valid_journey_date(journey_date):
             flash("Journey date must be within 60 days from today.", "danger")
@@ -453,13 +453,13 @@ def book_ticket():
             if age < 1 or age > 120:
                 flash("Please enter a valid age between 1 and 120.", "danger")
                 return render_template("book_ticket.html", trains=TRAINS)
-            if train ["seats"].get(travel_class, 0) <= 0:
-                flash(f"No seats available in {travel_class} class.", "danger")
+            if train ["seats"].get(travel_Class, 0) <= 0:
+                flash(f"No seats available in {travel_Class} class.", "danger")
             else:
-                train["seats"][travel_class] -= 1
+                train["seats"][travel_Class] -= 1
                 bookings = get_booking()
                 pnr = generate_pnr()
-                fare = FARE_SHART.get(travel_class)
+                fare = FARE_SHART.get(travel_Class)
                 booking_time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
                 ticket = {
                     "PNR": pnr,
@@ -474,7 +474,7 @@ def book_ticket():
                     "journey date": datetime.datetime.strptime(journey_date,"%Y-%m-%d").strftime("%d-%m-%Y"),
                     "Train": train["name"],
                     "Train_no": train["train_no"],
-                    "class": travel_class,
+                    "Class": travel_Class,
                     "Fare": fare,
                     "Departure": train["departure"],
                     "Arrival": train["arrival"],
@@ -491,7 +491,7 @@ def book_ticket():
                     f"Name: {name}\n",
                     f"Train: {train['name']} ({train['train_no']})\n",
                     f"From: {from_station} to {to_station}\n",
-                    f"Class: {travel_class}\n",
+                    f"Class: {travel_Class}\n",
                     f"Fare: Rs.{fare}\n"
                     f"Journey Date: {ticket['journey date']}\n",
                     f"Status: {ticket['Status']}\n"
@@ -566,7 +566,7 @@ def edit_booking(pnr):
             if age < 1 or age > 120:
                 flash("Please enter a valid age between 1 and 120.", "danger")
                 return render_template("edit_booking.html", ticket=ticket,trains=TRAINS)
-            if travel_class != ticket["class"]:
+            if travel_class != ticket["Class"]:
                 if train["seats"].get(travel_class, 0) <= 0:
                     flash(f"No seats available in {travel_class} class.", "danger")
                     return render_template("edit_booking.html", ticket=ticket,trains=TRAINS)

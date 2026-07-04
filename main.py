@@ -37,7 +37,7 @@ if "trains" not in st.session_state:
         {
             "train_no":"T101",
             "name":"Express A",
-            "from":"Delfi",
+            "from":"Delhi",
             "to":"Mumbai",
             "departure":"09:00",
             "arrival":"18:00",
@@ -45,7 +45,7 @@ if "trains" not in st.session_state:
         },
         {
             "train_no":"T102",
-            "name":"Rajdhni B",
+            "name":"Rajdhani B",
             "from":"Delhi",
             "to":"kolkata",
             "departure":"10:00",
@@ -55,7 +55,7 @@ if "trains" not in st.session_state:
         {
             "train_no":"T103",
             "name":"Duronto c",
-            "from":"Dlile",
+            "from":"Delhi",
             "to":"chennai",
             "departure":"7:00",
             "arrival":"22:00",
@@ -74,7 +74,7 @@ if "trains" not in st.session_state:
             "train_no":"up102",
             "name":"kanpur Intersity",
             "from":"kanpur",
-            "to":"dehli",
+            "to":"Dehli",
             "departure":"5:00",
             "arrival":"14:00",
             "seats":{"SL":20,"3A":12,"2A":6}
@@ -202,7 +202,7 @@ def display_ticket(ticket):
     with col1:
         st.metric("PNR Number",ticket["PNR"])
     with col2:
-        st.metric("Booking Time", ticket["Booking iTme"])
+        st.metric("Booking Time", ticket["Booking Time"])
     with col3:
         st.metric("Status", ticket["Status"])
     st.markdown("---")
@@ -379,7 +379,7 @@ def booking_page():
                 }
                 st.session_state.bookings[pnr] = ticket
                 save_json(BOOKINGS_FILE,st.session_state.bookings)
-                st.session_state.users[st.session_state.current_users]["bookings"].append(pnr)
+                st.session_state.users[st.session_state.current_user]["bookings"].append(pnr)
                 save_json(USER_FILE,st.session_state.users)
                 st.success("Ticket Booked Successfully!")
                 qr_data = (
@@ -396,7 +396,7 @@ def booking_page():
                     st.image(qr_img, caption = "Scan to view tricket" , use_container_width=True )
 def view_booking_page():
     st.title("My Bookings")
-    user_booking = st.session_state.users[st.session_state.current_users].get("bookings",[])
+    user_booking = st.session_state.users[st.session_state.current_user].get("bookings",[])
     if not user_booking:
         st.info("No booking found. Book your first ticket!")
         return
@@ -423,7 +423,7 @@ def view_booking_page():
                 with col2:
                     st.write('QR code')
                     qr_data = (
-                        f"PNR: {pnr}\nName: {ticket['Name']}\nTrain: {ticket['Train']} ({ticket['Train No ']})\n"
+                        f"PNR: {pnr}\nName: {ticket['Name']}\nTrain: {ticket['Train']} ({ticket['Train No']})\n"
                         f"From: {ticket['From']} to {ticket["To"]}\nClass: {ticket['Class']}\n"
                         f"Fares: Rs.{ticket['Fare']}\nJourney Date: {ticket['Journey Date']}\nStatus: {ticket['Status']}"
                     )
@@ -471,7 +471,7 @@ def edit_booking():
                         st.error(f" No seats available in {train_class} class.")
                         return
                     if train_class != ticket["Class"]:
-                        train["seats"][ticket["class"]] += 1
+                        train["seats"][ticket["Class"]] += 1
                         train["seats"][train_class] -= 1
                     ticket["Name"] = name
                     ticket["Age"] = age
@@ -518,7 +518,7 @@ def track_pnr_page():
             st.error("PNR not found! please check the PNR number.")
 def clear_booking_page():
     st.title("Clear All Boolking")
-    user_bookings = st.session_state.users[st.session_state.current_users].get("bookings",[])
+    user_bookings = st.session_state.users[st.session_state.current_user].get("bookings",[])
     if not user_bookings:
         st.info("No bookings to clear.")
         return
@@ -533,9 +533,9 @@ def clear_booking_page():
         col1 , col2 = st.columns(2)
         with col1:
             if st.button("Yes, Delete all",use_container_width=True):
-                for pnr in st.session_state.users[st.session_state.current_users].get("bookings",[]):
+                for pnr in st.session_state.users[st.session_state.current_user].get("bookings",[]):
                     st.session_state.bookings.pop(pnr,None)
-                    st.session_state.user[st.session_state.current_users]["bookings"].clear()
+                    st.session_state.users[st.session_state.current_user]["bookings"].clear()
                     save_json(BOOKINGS_FILE,st.session_state.bookings)
                     save_json(USER_FILE,st.session_state.users)
                     st.session_state.confirm_clear = False
