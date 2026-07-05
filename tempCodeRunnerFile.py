@@ -55,12 +55,12 @@ def send_otp_email(to_email):
     st.session_state.otp_store[to_email] = otp
     msg = EmailMessage()
     msg['Subject'] = 'Your OTP for Railway Booking'
-    msg['From'] = 'your_email@gmail.com'
+    msg['From'] = 'gmansstar2314@gmail.com'
     msg['To'] = to_email
     msg.set_content(f'your OTP is: {otp}')
     try:
         with smtplib.SMTP_SSL('smtp.gmail.com',465) as smtp:
-            smtp.login("Ayushbro779@gmail.com","okaupcpqfgudzygc")
+            smtp.login("gmansstar2314@gmail.com","vfzqshhzywfazjgf")
             smtp.send_message(msg)
         return True
     except Exception as e:
